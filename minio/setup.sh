@@ -23,6 +23,14 @@ sudo docker run -d \
   -e MINIO_ROOT_PASSWORD=minio123 \
   minio/minio server /data --console-address ":9001"
 
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+sudo mv mc /usr/local/bin/
+
+mc alias set local http://localhost:9000 minio minio123
+
+mc mb local/milvus
+
 
 
 
