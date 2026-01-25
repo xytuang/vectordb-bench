@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Install go
-wget https://go.dev/dl/go1.25.6.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.25.6.linux-amd64.tar.gz
-echo "export PATH=$PATH:/usr/local/go/bin" >> $HOME/.profile
-source $HOME/.profile
-
 # Install and start docker
 sudo apt update
 sudo apt install -y docker.io
@@ -23,6 +17,7 @@ sudo docker run -d \
   -e MINIO_ROOT_PASSWORD=minio123 \
   minio/minio server /data --console-address ":9001"
 
+# Install minio client and create Milvus bucket
 wget https://dl.min.io/client/mc/release/linux-amd64/mc
 chmod +x mc
 sudo mv mc /usr/local/bin/
