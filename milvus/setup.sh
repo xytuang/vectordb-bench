@@ -24,5 +24,13 @@ sudo systemctl start docker
 wget https://github.com/milvus-io/milvus/releases/download/v2.3.21/milvus-standalone-docker-compose.yml \
   -O docker-compose.yml
 
+rm docker-compose.yml
+cp mod-docker-compose.yml docker-compose.yml
 sudo docker-compose up -d
+
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
+chmod +x mc
+sudo mv mc /usr/local/bin/
+mc alias set remote http://node0:9000 minio minio123
+mc ls remote
 
