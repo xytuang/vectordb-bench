@@ -12,7 +12,7 @@ sudo apt install -y docker.io
 sudo systemctl enable docker
 sudo systemctl start docker
 
-mkdir -p minio-data
+mkdir -p /mydata/minio-data
 
 sudo docker run -d \
   --name minio \
