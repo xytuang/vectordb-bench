@@ -4,7 +4,7 @@
 wget https://go.dev/dl/go1.25.6.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.25.6.linux-amd64.tar.gz
 echo "export PATH=$PATH:/usr/local/go/bin" >> $HOME/.profile
-source $HOME./profile
+source $HOME/.profile
 
 # Install and start docker
 sudo apt update
