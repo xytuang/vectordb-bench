@@ -2,11 +2,10 @@ common:
   storageType: minio
 
 minio:
-  address: node0::9000
+  address: node0:9000
   accessKeyID: minio
   secretAccessKey: minio123
   useSSL: false
   bucketName: milvus
   rootPath: files
-  useIAM: false
 

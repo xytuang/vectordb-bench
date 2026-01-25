@@ -13,7 +13,7 @@ services:
       - ./volumes/etcd:/etcd
     command: >
       etcd
-      -advertise-client-urls=http://127.0.0.1:2379
+      -advertise-client-urls=http://milvus-etcd:2379
       -listen-client-urls http://0.0.0.0:2379
       --data-dir /etcd
     healthcheck:
@@ -24,7 +24,7 @@ services:
 
   standalone:
     image: milvusdb/milvus:v2.3.21
-    command: ["milvus", "run", "standalone", "--config", "/milvus/configs/milvus.yaml"]
+    command: ["milvus", "run", "standalone", "--config"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
     volumes:
