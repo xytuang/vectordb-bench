@@ -2,7 +2,7 @@
 set -e
 
 # IMPORTANT: Set this to your MinIO node's IP address
-MINIO_HOST="<MINIO_NODE_IP>"
+MINIO_HOST="node0"
 
 # Set limit on number of open files
 ulimit -n 1048576
@@ -41,7 +41,7 @@ services:
       - ETCD_QUOTA_BACKEND_BYTES=4294967296
       - ETCD_SNAPSHOT_COUNT=50000
     volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
+      - \${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
     command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
     healthcheck:
       test: ["CMD", "etcdctl", "endpoint", "health"]
@@ -57,12 +57,12 @@ services:
     - seccomp:unconfined
     environment:
       ETCD_ENDPOINTS: etcd:2379
-      MINIO_ADDRESS: ${MINIO_HOST}:9000
+      MINIO_ADDRESS: \${MINIO_HOST}:9000
       MINIO_ACCESS_KEY_ID: minio
       MINIO_SECRET_ACCESS_KEY: minio123
-      MINIO_USE_SSL: false
+      MINIO_USE_SSL: "false"
     volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
+      - \${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
       interval: 30s
