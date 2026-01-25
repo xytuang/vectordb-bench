@@ -27,5 +27,6 @@ wget https://github.com/milvus-io/milvus/releases/download/v2.3.21/milvus-standa
 rm docker-compose.yml
 cp mod-docker-compose.yml docker-compose.yml
 sudo docker-compose up -d
+sudo docker network connect milvus minio
 
 

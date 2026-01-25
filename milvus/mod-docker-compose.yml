@@ -24,7 +24,7 @@ services:
 
   standalone:
     image: milvusdb/milvus:v2.3.21
-    command: ["milvus", "run", "standalone"]
+    command: ["milvus", "run", "standalone", "--config", "/milvus/configs/milvus.yaml"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
     volumes:
@@ -35,6 +35,7 @@ services:
       - "9091:9091"
     depends_on:
       - etcd
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
       interval: 30s
