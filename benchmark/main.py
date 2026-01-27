@@ -1,25 +1,141 @@
-from pymilvus import connections
+import os
+import sys
+import argparse
 import subprocess
+from pathlib import Path
 
-def start():
-    connections.connect("default", host="node1", port="19530")
-    print("Connected to Milvus successfully!")
+# Configuration
+MILVUS_HOST = "node1"
+MILVUS_PORT = "19530"
+DATASET_DIR = "/mydata/spacev1b"
+BASE_VECTORS = f"{DATASET_DIR}/spacev1b_base.bin"
+QUERY_VECTORS = f"{DATASET_DIR}/spacev1b_query.bin"
+GROUND_TRUTH = f"{DATASET_DIR}/spacev1b_truth.bin"
 
-def get_dataset():
+def check_dataset():
+    """Check if dataset files exist"""
+    files = [BASE_VECTORS, QUERY_VECTORS, GROUND_TRUTH]
+    missing = [f for f in files if not os.path.exists(f)]
+    
+    if missing:
+        print("Dataset files missing:")
+        for f in missing:
+            print(f"   - {f}")
+        return False
+    
+    print("Dataset files found:")
+    return True
+
+def download_dataset():
+    """Download SPACEV1B dataset"""
+    print("Downloading SPACEV1B dataset...")
+    script_path = "/mydata/vectordb-bench/benchmark/fetch-data.sh"
+    
+    if not os.path.isfile(script_path):
+        print(f"Script not found: {script_path}")
+        return False
+    
     try:
-        subprocess.run(["./fetch_data.sh"], check=True)
-        print("Fetched data sucessfully")
+        subprocess.run([script_path], check=True)
+        return True
     except subprocess.CalledProcessError as e:
-        print(f"Script failed with return code: {e.returncode}")
-    except FileNotFoundError:
-        print(f"Error: The script file was not found.")
+        print(f"Download failed: {e}")
+        return False
 
+def load_data():
+    """Load vectors into Milvus"""
+    print("Loading data into Milvus...")
+    try:
+        from loader import load_spacev1b_to_milvus
+        load_spacev1b_to_milvus(
+            base_file=BASE_VECTORS,
+            milvus_host=MILVUS_HOST,
+            milvus_port=MILVUS_PORT
+        )
+        return True
+    except Exception as e:
+        print(f"Data loading failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
-def stop():
-    connections.disconnect("default")
+def run_benchmark():
+    """Run benchmark queries"""
+    print("Running benchmark...")
+    try:
+        from benchmark import run_benchmark
+        results = run_benchmark(
+            query_file=QUERY_VECTORS,
+            ground_truth_file=GROUND_TRUTH,
+            milvus_host=MILVUS_HOST,
+            milvus_port=MILVUS_PORT
+        )
+        return results
+    except Exception as e:
+        print(f"Benchmark failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+def main():
+    parser = argparse.ArgumentParser(description="SPACEV1B Milvus Benchmark")
+    parser.add_argument("--download", action="store_true", 
+                       help="Download SPACEV1B dataset")
+    parser.add_argument("--load", action="store_true",
+                       help="Load data into Milvus")
+    parser.add_argument("--benchmark", action="store_true",
+                       help="Run benchmark queries")
+    parser.add_argument("--all", action="store_true",
+                       help="Run all steps (download, load, benchmark)")
+    
+    args = parser.parse_args()
+    
+    # If no args, show help
+    if not any(vars(args).values()):
+        parser.print_help()
+        return
+    
+    print("=" * 60)
+    print("SPACEV1B Milvus Benchmark")
+    print("=" * 60)
+    
+    # Download
+    if args.download or args.all:
+        if not check_dataset():
+            if not download_dataset():
+                print("Failed to download dataset")
+                return
+        else:
+            print("Dataset already downloaded")
+    
+    # Load data
+    if args.load or args.all:
+        if not check_dataset():
+            print("Dataset not found. Run with --download first")
+            return
+        if not load_data():
+            print("Failed to load data")
+            return
+    
+    # Run benchmark
+    if args.benchmark or args.all:
+        if not check_dataset():
+            print("Dataset not found. Run with --download first")
+            return
+        results = run_benchmark()
+        if results:
+            print("=" * 60)
+            print("Benchmark Results")
+            print("=" * 60)
+            print(f"Queries: {results['total_queries']}")
+            print(f"Average latency: {results['avg_latency']:.2f} ms")
+            print(f"P95 latency: {results['p95_latency']:.2f} ms")
+            print(f"P99 latency: {results['p99_latency']:.2f} ms")
+            print(f"Throughput: {results['qps']:.2f} QPS")
+            print(f"Recall@100: {results['recall']:.4f}")
+            print("=" * 60)
+        else:
+            print("Benchmark failed")
 
 if __name__ == "__main__":
-    start()
-    get_dataset()
-    stop()
-
+    main()
