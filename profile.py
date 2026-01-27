@@ -14,7 +14,7 @@ node0.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD
 
 # Milvus node - memory focused  
 node1 = request.RawPC("node1")
-node1.hardware_type = "m510"  # or "c6525-100g" for more RAM
+node1.hardware_type = "d7615"  # or "c6525-100g" for more RAM
 node1.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
 
 # Client node
