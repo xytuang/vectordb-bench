@@ -7,13 +7,12 @@ import subprocess
 MILVUS_HOST = "node1"
 MILVUS_PORT = "19530"
 DATASET_DIR = "/mydata/spacev1b"
-BASE_VECTORS = f"{DATASET_DIR}/spacev1b_base.bin"
 QUERY_VECTORS = f"{DATASET_DIR}/spacev1b_query.bin"
 GROUND_TRUTH = f"{DATASET_DIR}/spacev1b_truth.bin"
 
 def check_dataset():
     """Check if dataset files exist"""
-    files = [BASE_VECTORS, QUERY_VECTORS, GROUND_TRUTH]
+    files = [QUERY_VECTORS, GROUND_TRUTH]
     missing = [f for f in files if not os.path.exists(f)]
     
     if missing:
@@ -28,7 +27,7 @@ def check_dataset():
 def download_dataset():
     """Download SPACEV1B dataset"""
     print("Downloading SPACEV1B dataset...")
-    script_path = "/mydata/vectordb-bench/benchmark/fetch-data.sh"
+    script_path = "/mydata/vectordb-bench/benchmark/fetch_data.sh"
     
     if not os.path.isfile(script_path):
         print(f"Script not found: {script_path}")
@@ -47,7 +46,7 @@ def load_data():
     try:
         from loader import load_spacev1b_to_milvus
         load_spacev1b_to_milvus(
-            base_file=BASE_VECTORS,
+            base_dir=DATASET_DIR,
             milvus_host=MILVUS_HOST,
             milvus_port=MILVUS_PORT
         )

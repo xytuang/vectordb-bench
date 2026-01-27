@@ -2,3 +2,4 @@ minio/go1.25.6.linux-amd64.tar.gz
 milvus/docker-compose.yml
 milvus/volumes
 benchmark/vectordb_bench
+benchmark/__pycache__

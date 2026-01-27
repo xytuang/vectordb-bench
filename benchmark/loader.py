@@ -8,23 +8,38 @@ COLLECTION_NAME = "spacev1b"
 DIM = 100
 BATCH_SIZE = 10000
 
-def read_spacev1b_vectors(base_file):
+def read_spacev1b_vectors(base_dir):
     """Read SPACEV1B binary format vectors"""
-    print(f"Reading vectors from {base_file}")
-    
-    with open(base_file, 'rb') as f:
-        # Read header (only in first file/merged file)
-        vec_count = struct.unpack('i', f.read(4))[0]
-        vec_dimension = struct.unpack('i', f.read(4))[0]
-        
-        print(f"Vector count: {vec_count:,}")
-        print(f"Vector dimension: {vec_dimension}")
-        
-        # Read all vector data
-        vecbuf = f.read(vec_count * vec_dimension)
-        
+    print(f"Reading vectors from {base_dir}")
+    vector_files = sorted([f for f in os.listdir(base_dir) if f.startswith('spacev1b_vectors_') and f.endswith('.bin')])
+
+    if not vector_files:
+        raise FileNotFoundError(f"No vector files found in {base_dir}")
+
+    print(f"Found {len(vector_files)} vector files: {vector_files}")
+
+
+    for i in range(1, len(vector_files) + 1):
+        with open(os.path.join(base_dir, 'spacev1b_vectors_%d.bin' % i), 'rb') as f:
+            if i == 1:
+                vec_count = struct.unpack('i', f.read(4))[0]
+                vec_dimension = struct.unpack('i', f.read(4))[0]
+                vecbuf = bytearray(len(vector_files) * vec_dimension)
+                vecbuf_offset = 0
+            while True:
+                part = f.read(1048576)
+                if len(part) == 0: break
+                vecbuf[vecbuf_offset: vecbuf_offset + len(part)] = part
+                vecbuf_offset += len(part)
+
+        actual_vec_count = vecbuf_offset // vec_dimension
+        leftover = vecbuf_offset % vec_dimension
+
+        if leftover > 0:
+            print("Found leftover bytes")
+
         # Convert to numpy array
-        vectors = np.frombuffer(vecbuf, dtype=np.int8).reshape((vec_count, vec_dimension))
+        vectors = np.frombuffer(vecbuf[:vecbuf_offset], dtype=np.int8).reshape((actual_vec_count, vec_dimension))
         
         # Convert int8 to float32 for Milvus
         # Note: Milvus requires float vectors, so we normalize int8 to float
@@ -87,7 +102,7 @@ def create_collection(drop_old=True):
     
     return collection
 
-def load_spacev1b_to_milvus(base_file, milvus_host, milvus_port):
+def load_spacev1b_to_milvus(base_dir, milvus_host, milvus_port):
     """Main loading function"""
     # Connect to Milvus
     print(f"Connecting to Milvus at {milvus_host}:{milvus_port}")
@@ -98,7 +113,7 @@ def load_spacev1b_to_milvus(base_file, milvus_host, milvus_port):
     
     # Read all vectors
     print("Loading vectors into memory...")
-    vectors = read_spacev1b_vectors(base_file)
+    vectors = read_spacev1b_vectors(base_dir)
     total_vectors = len(vectors)
     
     print(f"Inserting {total_vectors:,} vectors into Milvus...")
