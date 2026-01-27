@@ -28,6 +28,7 @@ echo "Downloading query and ground truth files..."
 git lfs pull --include "datasets/SPACEV1B/query.bin"
 git lfs pull --include "datasets/SPACEV1B/truth.bin"
 
+cd datasets/SPACEV1B/vectors.bin/
 # Merge files
 if [ ! -f "vectors_merged.bin" ]; then
     mv vectors_1.bin vectors_merged.bin
