@@ -28,22 +28,15 @@ echo "Downloading query and ground truth files..."
 git lfs pull --include "datasets/SPACEV1B/query.bin"
 git lfs pull --include "datasets/SPACEV1B/truth.bin"
 
-cd datasets/SPACEV1B/vectors.bin/
-# Merge files
-if [ ! -f "vectors_merged.bin" ]; then
-    mv vectors_1.bin vectors_merged.bin
-    for i in {2..3}; do
-        cat vectors_$i.bin >> vectors_merged.bin
-        rm vectors_$i.bin  # Delete immediately after merging
-    done
-fi
 
 # Move to cleaner location
 echo "Organizing files..."
 cd /mydata/spacev1b
-mv SPTAG/datasets/SPACEV1B/vectors.bin/vectors_merged.bin ./spacev1b_base.bin 2>/dev/null || true
+mv SPTAG/datasets/SPACEV1B/vectors.bin/vectors_1.bin ./spacev1b_vectors_1.bin 2>/dev/null || true
+mv SPTAG/datasets/SPACEV1B/vectors.bin/vectors_2.bin ./spacev1b_vectors_2.bin 2>/dev/null || true
+mv SPTAG/datasets/SPACEV1B/vectors.bin/vectors_3.bin ./spacev1b_vectors_3.bin 2>/dev/null || true
 mv SPTAG/datasets/SPACEV1B/query.bin ./spacev1b_query.bin 2>/dev/null || true
-mv SPTAG/datasets/SPACEV1B/query_gt100.bin ./spacev1b_truth.bin 2>/dev/null || true
+mv SPTAG/datasets/SPACEV1B/truth.bin ./spacev1b_truth.bin 2>/dev/null || true
 
 # Clean up git repo to save space
 echo "Cleaning up to save space..."
