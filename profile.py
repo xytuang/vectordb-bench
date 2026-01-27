@@ -2,6 +2,14 @@
 import geni.portal as portal
 import geni.rspec.pg as rspec
 
+"""
+This is a profile for benchmarking vector dbs.
+
+Instructions:
+Wait for the profile instance to start, and then log in to the hosts via SSH.
+Clone this repo to the /mydata directory for all hosts and run the setup scripts for each host.
+"""
+
 pc = portal.Context()
 
 # Create a Request object to start building the RSpec.
