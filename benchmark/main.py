@@ -2,7 +2,6 @@ import os
 import sys
 import argparse
 import subprocess
-from pathlib import Path
 
 # Configuration
 MILVUS_HOST = "node1"
