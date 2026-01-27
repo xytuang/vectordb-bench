@@ -19,7 +19,7 @@ node1.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD
 
 # Client node
 node2 = request.RawPC("node2")
-node2.hardware_type = "c6525-25g"  # or "xl170"
+node2.hardware_type = "xl170"  # or "c6525-25g"
 node2.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
 
 # Create a LAN to connect all nodes
