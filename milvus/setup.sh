@@ -61,6 +61,7 @@ services:
       MINIO_ACCESS_KEY_ID: minio
       MINIO_SECRET_ACCESS_KEY: minio123
       MINIO_USE_SSL: "false"
+      MINIO_BUCKET_NAME: milvus
     volumes:
       - \${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
     healthcheck:
