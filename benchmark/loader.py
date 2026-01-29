@@ -177,9 +177,9 @@ def load_spacev1b_to_milvus(base_dir, milvus_host, milvus_port):
     # Create index
     print("Creating index...")
     index_params = {
-        "index_type": "IVF_FLAT",
+        "index_type": "DISKANN",
         "metric_type": "L2",
-        "params": {"nlist": 4096}
+        "params": {}
     }
     collection.create_index("embedding", index_params)
     print("Index created")

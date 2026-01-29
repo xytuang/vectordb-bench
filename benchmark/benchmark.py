@@ -56,7 +56,7 @@ def run_benchmark(query_file, ground_truth_file, milvus_host, milvus_port):
     
     # Run queries
     print("Running queries...")
-    search_params = {"metric_type": "L2", "params": {"nprobe": 16}}
+    search_params = {"metric_type": "L2", "param": {"search_list": 100}}
     
     latencies = []
     all_results = []
