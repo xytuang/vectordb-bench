@@ -57,7 +57,7 @@ services:
     - seccomp:unconfined
     environment:
       ETCD_ENDPOINTS: etcd:2379
-      MINIO_ADDRESS: \${MINIO_HOST}:9000
+      MINIO_ADDRESS: node0:9000
       MINIO_ACCESS_KEY_ID: minio
       MINIO_SECRET_ACCESS_KEY: minio123
       MINIO_USE_SSL: "false"
