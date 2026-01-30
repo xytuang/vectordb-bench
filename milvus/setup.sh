@@ -64,6 +64,7 @@ services:
       MINIO_BUCKET_NAME: milvus
     volumes:
       - \${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
+      - /mydata/tmp:/tmp/milvus
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
       interval: 30s
