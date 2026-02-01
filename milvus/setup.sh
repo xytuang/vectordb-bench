@@ -23,6 +23,10 @@ sudo apt install -y docker.io docker-compose
 sudo systemctl enable docker
 sudo systemctl start docker
 
+
+sudo mkdir -p /mydata/tmp
+sudo chmod 1777 /mydata/tmp
+
 # Download base Milvus configuration
 wget https://github.com/milvus-io/milvus/releases/download/v2.3.21/milvus-standalone-docker-compose.yml \
   -O docker-compose.yml
@@ -62,6 +66,7 @@ services:
       MINIO_SECRET_ACCESS_KEY: minio123
       MINIO_USE_SSL: "false"
       MINIO_BUCKET_NAME: milvus
+      TMPDIR: /tmp/milvus
     volumes:
       - \${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
       - /mydata/tmp:/tmp/milvus
