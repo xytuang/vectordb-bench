@@ -17,18 +17,22 @@ request = pc.makeRequestRSpec()
 
 # MinIO node - storage focused
 node0 = request.RawPC("node0")
-node0.hardware_type = "xl170"  # or "c6525-100g"
+node0.hardware_type = "d750"  # Use the Optane SSD on the d750 or "c6525-100g" or "xl170"
 node0.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
+bs1 = node0.Blockstore("bs", "/mydata")
+
 
 # Milvus node - memory focused  
 node1 = request.RawPC("node1")
-node1.hardware_type = "xl170"  # or "c6525-100g" or "d7615" for more RAM
+node1.hardware_type = "c6525-25g"  # or "c6525-100g" or "d7615" or "xl170" for more RAM
 node1.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
+bs1 = node1.Blockstore("bs", "/mydata")
 
 # Client node
 node2 = request.RawPC("node2")
-node2.hardware_type = "xl170"  # or "c6525-25g"
+node2.hardware_type = "c6525-25g" # or "xl170"
 node2.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
+bs2 = node2.Blockstore("bs", "/mydata")
 
 # Create a LAN to connect all nodes
 lan = request.LAN("lan")
