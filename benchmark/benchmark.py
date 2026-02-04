@@ -102,14 +102,14 @@ class SearchWorker(threading.Thread):
 
         # Calculate delay between queries to achieve target QPS
         # delay = 1.0 / self.target_qps if self.target_qps > 0 else 0
-        print(f"[{time.time():.2f}] Worker {self.worker_id} starting query loop", flush=True)
+        # print(f"[{time.time():.2f}] Worker {self.worker_id} starting query loop", flush=True)
 
         while self.running and time.time() < end_time:
             try:
                 # Select a query (cycle through available queries)
                 query_vector = [self.queries[query_idx % len(self.queries)].tolist()]
 
-                print(f"[{time.time():.2f}] Worker {self.worker_id} query {self.queries_executed}", flush=True)
+                # print(f"[{time.time():.2f}] Worker {self.worker_id} query {self.queries_executed}", flush=True)
 
                 start = time.time()
                 results = collection.search(
@@ -225,7 +225,7 @@ def run_benchmark(
     milvus_port,
     search_qps=1000,
     insert_qps=10000,
-    num_search_workers=10,
+    num_search_workers=2,
     num_insert_workers=5,
     insert_batch_size=1000,
     duration=0,
