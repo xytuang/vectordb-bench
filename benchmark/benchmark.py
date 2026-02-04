@@ -46,36 +46,32 @@ class LatencyTracker:
 
     def __init__(self):
         self.latencies = []
-        self.lock = threading.Lock()
 
     def record(self, latency_seconds):
-        with self.lock:
-            self.latencies.append(latency_seconds * 1000)  # Convert to ms
+        self.latencies.append(latency_seconds * 1000)  # Convert to ms
 
     def get_stats(self):
-        with self.lock:
-            if not self.latencies:
-                return {}
+        if not self.latencies:
+            return {}
 
-            sorted_latencies = sorted(self.latencies)
-            n = len(sorted_latencies)
+        sorted_latencies = sorted(self.latencies)
+        n = len(sorted_latencies)
 
-            return {
-                "count": n,
-                "mean_ms": statistics.mean(sorted_latencies),
-                "p50_ms": np.percentile(sorted_latencies, 50),
-                "p80_ms": np.percentile(sorted_latencies, 80),
-                "p90_ms": np.percentile(sorted_latencies, 90),
-                "p95_ms": np.percentile(sorted_latencies, 95),
-                "p99_ms": np.percentile(sorted_latencies, 99),
-                "p99_9_ms": np.percentile(sorted_latencies, 99.9),
-                "min_ms": min(sorted_latencies),
-                "max_ms": max(sorted_latencies)
-            }
+        return {
+            "count": n,
+            "mean_ms": statistics.mean(sorted_latencies),
+            "p50_ms": np.percentile(sorted_latencies, 50),
+            "p80_ms": np.percentile(sorted_latencies, 80),
+            "p90_ms": np.percentile(sorted_latencies, 90),
+            "p95_ms": np.percentile(sorted_latencies, 95),
+            "p99_ms": np.percentile(sorted_latencies, 99),
+            "p99_9_ms": np.percentile(sorted_latencies, 99.9),
+            "min_ms": min(sorted_latencies),
+            "max_ms": max(sorted_latencies)
+        }
 
     def reset(self):
-        with self.lock:
-            self.latencies = []
+        self.latencies = []
 
 
 class SearchWorker(threading.Thread):
@@ -276,21 +272,19 @@ def run_benchmark(
         print(f"Testing search performance WITHOUT concurrent inserts")
         print()
 
-        # Initialize search-only latency tracker
-        search_only_tracker = LatencyTracker()
-
         # Calculate QPS per worker for search-only
         search_qps_per_worker = search_qps / num_search_workers
 
         # Create search-only workers
         search_only_workers = []
         for i in range(num_search_workers):
+            lat_tracker = LatencyTracker()
             worker = SearchWorker(
                 worker_id=i,
                 collection=collection,
                 queries=queries,
                 target_qps=search_qps_per_worker,
-                latency_tracker=search_only_tracker,
+                latency_tracker=lat_tracker,
                 duration=search_only_duration
             )
             search_only_workers.append(worker)
@@ -309,21 +303,36 @@ def run_benchmark(
             total_searches = sum(w.queries_executed for w in search_only_workers)
             current_qps = total_searches / elapsed
 
-            stats = search_only_tracker.get_stats()
             print(f"[{elapsed:.0f}s] Searches: {total_searches:,} ({current_qps:.0f} QPS)")
-            if stats:
-                print(f"        Latency - mean: {stats['mean_ms']:.2f}ms, "
-                      f"p50: {stats['p50_ms']:.2f}ms, p95: {stats['p95_ms']:.2f}ms, "
-                      f"p99: {stats['p99_ms']:.2f}ms")
 
         # Stop workers
         print("\nStopping search-only workers...")
         for worker in search_only_workers:
             worker.stop()
 
+
+        latencies = []
         # Wait for workers to finish
         for worker in search_only_workers:
+            latencies.extend(worker.latency_tracker.latencies)
             worker.join(timeout=10)
+
+
+        sorted_latencies = sorted(latencies)
+        n = len(latencies)
+
+        stats = {
+            "count": n,
+            "mean_ms": statistics.mean(sorted_latencies),
+            "p50_ms": np.percentile(sorted_latencies, 50),
+            "p80_ms": np.percentile(sorted_latencies, 80),
+            "p90_ms": np.percentile(sorted_latencies, 90),
+            "p95_ms": np.percentile(sorted_latencies, 95),
+            "p99_ms": np.percentile(sorted_latencies, 99),
+            "p99_9_ms": np.percentile(sorted_latencies, 99.9),
+            "min_ms": min(sorted_latencies),
+            "max_ms": max(sorted_latencies)
+        }
 
         # Collect search-only statistics
         search_only_time = time.time() - start_time
@@ -334,7 +343,7 @@ def run_benchmark(
             "total_queries": search_only_total,
             "errors": search_only_errors,
             "actual_qps": search_only_total / search_only_time,
-            "latency": search_only_tracker.get_stats()
+            "latency": stats
         }
 
         # Print search-only results
@@ -481,43 +490,43 @@ def run_benchmark(
         print(f"  Target rate: {insert_qps} vectors/sec")
 
     # Print comparison if search-only phase was run
-    if search_only_stats and search_stats:
-        print("\n" + "="*80)
-        print("COMPARISON: Search-Only vs Concurrent")
-        print("="*80)
+    # if search_only_stats and search_stats:
+    #     print("\n" + "="*80)
+    #     print("COMPARISON: Search-Only vs Concurrent")
+    #     print("="*80)
 
-        so_lat = search_only_stats['latency']
-        con_lat = search_stats
+    #     so_lat = search_only_stats['latency']
+    #     con_lat = search_stats
 
-        print(f"\nThroughput:")
-        print(f"  Search-only QPS:   {search_only_stats['actual_qps']:8.2f}")
-        print(f"  Concurrent QPS:    {total_searches / total_time:8.2f}")
-        degradation = (1 - (total_searches / total_time) / search_only_stats['actual_qps']) * 100
-        print(f"  QPS Degradation:   {degradation:8.1f}%")
+    #     print(f"\nThroughput:")
+    #     print(f"  Search-only QPS:   {search_only_stats['actual_qps']:8.2f}")
+    #     print(f"  Concurrent QPS:    {total_searches / total_time:8.2f}")
+    #     degradation = (1 - (total_searches / total_time) / search_only_stats['actual_qps']) * 100
+    #     print(f"  QPS Degradation:   {degradation:8.1f}%")
 
-        print(f"\nLatency (milliseconds):")
-        print(f"  Metric      Search-Only    Concurrent    Impact")
-        print(f"  --------------------------------------------------------")
-        for metric in ['mean_ms', 'p50_ms', 'p80_ms', 'p90_ms', 'p95_ms', 'p99_ms', 'p99_9_ms']:
-            metric_name = metric.replace('_ms', '').upper()
-            so_val = so_lat[metric]
-            con_val = con_lat[metric]
-            impact = (con_val / so_val - 1) * 100
-            print(f"  {metric_name:8s}    {so_val:8.2f}       {con_val:8.2f}      {impact:+6.1f}%")
+    #     print(f"\nLatency (milliseconds):")
+    #     print(f"  Metric      Search-Only    Concurrent    Impact")
+    #     print(f"  --------------------------------------------------------")
+    #     for metric in ['mean_ms', 'p50_ms', 'p80_ms', 'p90_ms', 'p95_ms', 'p99_ms', 'p99_9_ms']:
+    #         metric_name = metric.replace('_ms', '').upper()
+    #         so_val = so_lat[metric]
+    #         con_val = con_lat[metric]
+    #         impact = (con_val / so_val - 1) * 100
+    #         print(f"  {metric_name:8s}    {so_val:8.2f}       {con_val:8.2f}      {impact:+6.1f}%")
 
-        print(f"\nKey Insights:")
-        p50_impact = (con_lat['p50_ms'] / so_lat['p50_ms'] - 1) * 100
-        p99_impact = (con_lat['p99_ms'] / so_lat['p99_ms'] - 1) * 100
-        print(f"  • P50 latency increased by {p50_impact:.1f}% due to concurrent inserts")
-        print(f"  • P99 latency increased by {p99_impact:.1f}% due to concurrent inserts")
-        print(f"  • Search QPS decreased by {degradation:.1f}% due to concurrent inserts")
+    #     print(f"\nKey Insights:")
+    #     p50_impact = (con_lat['p50_ms'] / so_lat['p50_ms'] - 1) * 100
+    #     p99_impact = (con_lat['p99_ms'] / so_lat['p99_ms'] - 1) * 100
+    #     print(f"  • P50 latency increased by {p50_impact:.1f}% due to concurrent inserts")
+    #     print(f"  • P99 latency increased by {p99_impact:.1f}% due to concurrent inserts")
+    #     print(f"  • Search QPS decreased by {degradation:.1f}% due to concurrent inserts")
 
     # Save results
     results = {
         "timestamp": datetime.now().isoformat(),
         "config": {
-            "host": host,
-            "port": port,
+            "host": milvus_host,
+            "port": milvus_port,
             "collection": COLLECTION_NAME,
             "search_qps_target": search_qps,
             "insert_qps_target": insert_qps,
@@ -537,11 +546,11 @@ def run_benchmark(
                     "actual_qps": total_searches / total_time,
                     "latency": search_stats
                 },
-                "insert": {
-                    "total_vectors": total_inserts,
-                    "errors": total_insert_errors,
-                    "actual_rate": total_inserts / total_time
-                }
+                # "insert": {
+                #     "total_vectors": total_inserts,
+                #     "errors": total_insert_errors,
+                #     "actual_rate": total_inserts / total_time
+                # }
             }
         }
     }
