@@ -92,7 +92,6 @@ class SearchWorker(threading.Thread):
 
     def run(self):
         # Connect
-        print(f"Connecting to Milvus at {self.milvus_host}:{self.milvus_port}")
         connection_alias = f"worker_{self.worker_id}"
         connections.connect(connection_alias, host=self.milvus_host, port=self.milvus_port)
         
@@ -103,11 +102,14 @@ class SearchWorker(threading.Thread):
 
         # Calculate delay between queries to achieve target QPS
         # delay = 1.0 / self.target_qps if self.target_qps > 0 else 0
+        print(f"[{time.time():.2f}] Worker {self.worker_id} starting query loop", flush=True)
 
         while self.running and time.time() < end_time:
             try:
                 # Select a query (cycle through available queries)
                 query_vector = [self.queries[query_idx % len(self.queries)].tolist()]
+
+                print(f"[{time.time():.2f}] Worker {self.worker_id} query {self.queries_executed}", flush=True)
 
                 start = time.time()
                 results = collection.search(
