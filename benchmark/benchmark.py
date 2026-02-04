@@ -225,7 +225,7 @@ def run_benchmark(
     milvus_port,
     search_qps=1000,
     insert_qps=10000,
-    num_search_workers=2,
+    num_search_workers=10,
     num_insert_workers=5,
     insert_batch_size=1000,
     duration=0,
