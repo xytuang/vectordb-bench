@@ -24,7 +24,7 @@ bs0 = node0.Blockstore("bs0", "/mydata")
 
 # Milvus node - memory focused  
 node1 = request.RawPC("node1")
-node1.hardware_type = "d7615"  # Use the Optane SSD on the d750 or "c6525-100g" or "xl170" 
+node1.hardware_type = "d750"  # Use the Optane SSD on the d750 or "c6525-100g" or "xl170" 
 node1.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
 bs1 = node1.Blockstore("bs1", "/mydata")
 
