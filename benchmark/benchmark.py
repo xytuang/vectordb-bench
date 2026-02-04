@@ -77,12 +77,11 @@ class LatencyTracker:
 class SearchWorker(threading.Thread):
     """Worker thread for executing search queries"""
 
-    def __init__(self, worker_id, collection, queries, target_qps, latency_tracker, duration):
+    def __init__(self, worker_id, collection, queries, latency_tracker, duration):
         super().__init__(daemon=True)
         self.worker_id = worker_id
         self.collection = collection
         self.queries = queries
-        self.target_qps = target_qps
         self.latency_tracker = latency_tracker
         self.duration = duration
         self.running = True
@@ -94,7 +93,7 @@ class SearchWorker(threading.Thread):
         query_idx = 0
 
         # Calculate delay between queries to achieve target QPS
-        delay = 1.0 / self.target_qps if self.target_qps > 0 else 0
+        # delay = 1.0 / self.target_qps if self.target_qps > 0 else 0
 
         while self.running and time.time() < end_time:
             try:
@@ -116,8 +115,8 @@ class SearchWorker(threading.Thread):
                 query_idx += 1
 
                 # Sleep to control QPS
-                if delay > 0:
-                    time.sleep(delay)
+                # if delay > 0:
+                #    time.sleep(delay)
 
             except Exception as e:
                 self.errors += 1
@@ -273,7 +272,7 @@ def run_benchmark(
         print()
 
         # Calculate QPS per worker for search-only
-        search_qps_per_worker = search_qps / num_search_workers
+        # search_qps_per_worker = search_qps / num_search_workers
 
         # Create search-only workers
         search_only_workers = []
@@ -283,7 +282,6 @@ def run_benchmark(
                 worker_id=i,
                 collection=collection,
                 queries=queries,
-                target_qps=search_qps_per_worker,
                 latency_tracker=lat_tracker,
                 duration=search_only_duration
             )
@@ -377,7 +375,7 @@ def run_benchmark(
         latency_tracker = LatencyTracker()
 
         # Calculate QPS per worker
-        search_qps_per_worker = search_qps / num_search_workers
+        # search_qps_per_worker = search_qps / num_search_workers
         insert_qps_per_worker = insert_qps / num_insert_workers
 
         # Calculate insert range for each worker
@@ -391,7 +389,6 @@ def run_benchmark(
                 worker_id=i,
                 collection=collection,
                 queries=queries,
-                target_qps=search_qps_per_worker,
                 latency_tracker=latency_tracker,
                 duration=duration
             )
