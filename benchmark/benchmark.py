@@ -107,10 +107,9 @@ class SearchWorker(threading.Thread):
 
                 start = time.time()
                 results = self.collection.search(
-                    collection=self.collection,
                     data=query_vector,
-                    anns_field="vector",
-                    search_params={"metric_type": "L2", "params": {"search_list": 100}},
+                    anns_field="embedding",
+                    param={"metric_type": "L2", "params": {"search_list": 100}},
                     limit=TOP_K,
                     output_fields=[]
                 )
@@ -267,7 +266,6 @@ def run_benchmark(
     
     # Run queries
     print("Running queries...")
-    search_params = {"metric_type": "L2", "param": {"search_list": 100}}
 
     # Phase 3a: Search-only phase (optional)
     search_only_stats = None
