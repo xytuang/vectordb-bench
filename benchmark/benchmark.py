@@ -362,7 +362,7 @@ def run_benchmark(
     print(f"\n{'='*80}")
     print(f"PHASE {'3B' if search_only_duration > 0 else '3'}: Concurrent Search + Insert ({duration}s)")
     print(f"{'='*80}")
-    if search_only_duration > 0:
+    if duration > 0:
         print(f"Testing search performance WITH concurrent inserts")
         print()
 
