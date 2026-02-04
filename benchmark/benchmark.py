@@ -77,18 +77,27 @@ class LatencyTracker:
 class SearchWorker(threading.Thread):
     """Worker thread for executing search queries"""
 
-    def __init__(self, worker_id, collection, queries, latency_tracker, duration):
+    def __init__(self, worker_id, collection_name, queries, latency_tracker, duration, milvus_host, milvus_port):
         super().__init__(daemon=True)
         self.worker_id = worker_id
-        self.collection = collection
+        self.collection_name = collection_name
         self.queries = queries
         self.latency_tracker = latency_tracker
         self.duration = duration
         self.running = True
         self.queries_executed = 0
         self.errors = 0
+        self.milvus_host = milvus_host
+        self.milvus_port = milvus_port
 
     def run(self):
+        # Connect
+        print(f"Connecting to Milvus at {self.milvus_host}:{self.milvus_port}")
+        connection_alias = f"worker_{self.worker_id}"
+        connections.connect(connection_alias, host=self.milvus_host, port=self.milvus_port)
+        
+        collection = Collection(self.collection_name, using=connection_alias)
+    
         end_time = time.time() + self.duration
         query_idx = 0
 
@@ -101,7 +110,7 @@ class SearchWorker(threading.Thread):
                 query_vector = [self.queries[query_idx % len(self.queries)].tolist()]
 
                 start = time.time()
-                results = self.collection.search(
+                results = collection.search(
                     data=query_vector,
                     anns_field="embedding",
                     param={"metric_type": "L2", "params": {"search_list": 100}},
@@ -122,6 +131,8 @@ class SearchWorker(threading.Thread):
                 self.errors += 1
                 print(f"Search worker {self.worker_id} error: {e}")
 
+        connections.disconnect(connection_alias)
+
     def stop(self):
         self.running = False
 
@@ -129,11 +140,11 @@ class SearchWorker(threading.Thread):
 class InsertWorker(threading.Thread):
     """Worker thread for inserting vectors"""
 
-    def __init__(self, worker_id, collection, reader, start_idx, end_idx,
-                 batch_size, target_qps, duration):
+    def __init__(self, worker_id, collection_name, reader, start_idx, end_idx,
+                 batch_size, target_qps, duration, milvus_host, milvus_port):
         super().__init__(daemon=True)
         self.worker_id = worker_id
-        self.collection = collection
+        self.collection_name = collection_name
         self.reader = reader
         self.current_idx = start_idx
         self.end_idx = end_idx
@@ -143,8 +154,15 @@ class InsertWorker(threading.Thread):
         self.running = True
         self.vectors_inserted = 0
         self.errors = 0
+        self.milvus_host = milvus_host
+        self.milvus_port = milvus_port
 
     def run(self):
+        connection_alias = f"insert_worker_{self.worker_id}"
+        connections.connect(connection_alias, host=self.milvus_host, port=self.milvus_port)
+        
+        collection = Collection(self.collection_name, using=connection_alias)
+
         end_time = time.time() + self.duration
 
         # Calculate delay between batches to achieve target insert rate
@@ -194,6 +212,7 @@ class InsertWorker(threading.Thread):
                 if self.errors < 5:  # Only print first few errors
                     print(f"Insert worker {self.worker_id} error: {e}")
 
+        connection.disconnect(connection_alias)
     def stop(self):
         self.running = False
 
@@ -242,13 +261,6 @@ def run_benchmark(
     print(f"  Concurrent phase duration: {duration}s")
     print("="*80)
 
-    # Connect
-    print(f"Connecting to Milvus at {milvus_host}:{milvus_port}")
-    connections.connect("default", host=milvus_host, port=milvus_port)
-    
-    collection = Collection(COLLECTION_NAME)
-    collection.load()
-    
     # Load queries
     print(f"Loading queries from {query_file}")
     queries = read_spacev1b_queries(query_file)
@@ -280,10 +292,12 @@ def run_benchmark(
             lat_tracker = LatencyTracker()
             worker = SearchWorker(
                 worker_id=i,
-                collection=collection,
+                collection_name=COLLECTION_NAME,
                 queries=queries,
                 latency_tracker=lat_tracker,
-                duration=search_only_duration
+                duration=search_only_duration,
+                milvus_host=milvus_host,
+                milvus_port=milvus_port
             )
             search_only_workers.append(worker)
 
@@ -387,10 +401,12 @@ def run_benchmark(
         for i in range(num_search_workers):
             worker = SearchWorker(
                 worker_id=i,
-                collection=collection,
+                collection_name=COLLECTION_NAME,
                 queries=queries,
                 latency_tracker=latency_tracker,
-                duration=duration
+                duration=duration,
+                milvus_host=milvus_host,
+                milvus_port=milvus_port
             )
             search_workers.append(worker)
 
@@ -404,7 +420,7 @@ def run_benchmark(
 
             worker = InsertWorker(
                 worker_id=i,
-                collection=collection,
+                collection_name=COLLECTION_NAME,
                 reader=reader,
                 start_idx=start_idx,
                 end_idx=end_idx,
@@ -535,20 +551,20 @@ def run_benchmark(
         },
         "results": {
             "search_only": search_only_stats,
-            "concurrent": {
-                "duration_seconds": total_time,
-                "search": {
-                    "total_queries": total_searches,
-                    "errors": total_search_errors,
-                    "actual_qps": total_searches / total_time,
-                    "latency": search_stats
-                },
-                # "insert": {
-                #     "total_vectors": total_inserts,
-                #     "errors": total_insert_errors,
-                #     "actual_rate": total_inserts / total_time
-                # }
-            }
+            # "concurrent": {
+            #     "duration_seconds": total_time,
+            #     "search": {
+            #         "total_queries": total_searches,
+            #         "errors": total_search_errors,
+            #         "actual_qps": total_searches / total_time,
+            #         "latency": search_stats
+            #     },
+            #     "insert": {
+            #         "total_vectors": total_inserts,
+            #         "errors": total_insert_errors,
+            #         "actual_rate": total_inserts / total_time
+            #     }
+            # }
         }
     }
 

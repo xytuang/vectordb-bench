@@ -120,20 +120,7 @@ def main():
         if not check_dataset():
             print("Dataset not found. Run with --download first")
             return
-        results = run_benchmark()
-        if results:
-            print("=" * 60)
-            print("Benchmark Results")
-            print("=" * 60)
-            print(f"Queries: {results['total_queries']}")
-            print(f"Average latency: {results['avg_latency']:.2f} ms")
-            print(f"P95 latency: {results['p95_latency']:.2f} ms")
-            print(f"P99 latency: {results['p99_latency']:.2f} ms")
-            print(f"Throughput: {results['qps']:.2f} QPS")
-            print(f"Recall@100: {results['recall']:.4f}")
-            print("=" * 60)
-        else:
-            print("Benchmark failed")
+        run_benchmark()
 
 if __name__ == "__main__":
     main()
