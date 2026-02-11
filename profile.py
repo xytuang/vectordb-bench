@@ -17,7 +17,7 @@ request = pc.makeRequestRSpec()
 
 # MinIO node - storage focused
 node0 = request.RawPC("node0")
-node0.hardware_type = "c6525-25g"  # or "c6525-100g" or "d750" for better SSD
+node0.hardware_type = "m510"  # or "c6525-100g" or "d750" or "c6525-25g" for better SSD
 node0.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
 bs0 = node0.Blockstore("bs0", "/mydata")
 
@@ -30,7 +30,7 @@ bs1 = node1.Blockstore("bs1", "/mydata")
 
 # Client node
 node2 = request.RawPC("node2")
-node2.hardware_type = "c6525-25g" # or "xl170"
+node2.hardware_type = "m510" # or "xl170" or "c6525-25g"
 node2.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
 bs2 = node2.Blockstore("bs2", "/mydata")
 
