@@ -155,7 +155,7 @@ def load_spacev1b_to_milvus(base_dir, milvus_host, milvus_port):
     current_id = 0
     batch_count = 0
     
-    for batch_vectors in read_spacev1b_vectors_streaming(base_dir, batch_size=50000):
+    for batch_vectors in read_spacev1b_vectors_streaming(base_dir, batch_size=100000):
         num_vectors = len(batch_vectors)
         batch_ids = list(range(current_id, current_id + num_vectors))
         
