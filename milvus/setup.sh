@@ -67,6 +67,7 @@ services:
       MINIO_USE_SSL: "false"
       MINIO_BUCKET_NAME: milvus
       TMPDIR: /tmp/milvus
+      DATACOORD_SEGMENT_SEALPROPORTION: "0.75"
     volumes:
       - \${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
       - /mydata/tmp:/tmp/milvus
