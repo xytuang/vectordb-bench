@@ -11,7 +11,7 @@ import statistics
 
 
 COLLECTION_NAME = "spacev1b"
-TOP_K = 100
+TOP_K = 50
 
 def read_spacev1b_queries(query_file):
     """Read SPACEV1B query vectors"""
