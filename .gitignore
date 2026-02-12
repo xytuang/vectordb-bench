@@ -3,3 +3,4 @@ milvus/docker-compose.yml
 milvus/volumes
 benchmark/vectordb_bench
 benchmark/__pycache__
+benchmark/compact.py
