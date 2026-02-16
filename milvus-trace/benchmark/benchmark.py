@@ -587,7 +587,7 @@ if __name__ == "__main__":
     results = run_benchmark(
         query_file=sys.argv[1],
         ground_truth_file=sys.argv[2],
-        milvus_host="node1",
+        milvus_host="node0",
         milvus_port="19530"
     )
     print(results)

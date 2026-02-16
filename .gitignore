@@ -4,3 +4,6 @@ milvus/volumes
 benchmark/vectordb_bench
 benchmark/__pycache__
 benchmark/compact.py
+milvus-trace/benchmark/__pycache__
+milvus-trace/benchmark/vectordb_bench
+milvus-trace/milvus/volumes
