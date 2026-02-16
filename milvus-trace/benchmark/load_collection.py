@@ -2,7 +2,7 @@ from pymilvus import connections, Collection, utility
 from pymilvus.client.types import LoadState
 import time
 
-connections.connect(host='node1', port='19530')
+connections.connect(host='node0', port='19530')
 
 print('Checking collection status...')
 state = utility.load_state('spacev1b')

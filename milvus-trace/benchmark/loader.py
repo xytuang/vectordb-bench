@@ -201,6 +201,6 @@ if __name__ == "__main__":
     
     load_spacev1b_to_milvus(
         base_dir=sys.argv[1],
-        milvus_host="node1",
+        milvus_host="node0",
         milvus_port="19530"
     )

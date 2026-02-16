@@ -4,7 +4,7 @@ import argparse
 import subprocess
 
 # Configuration
-MILVUS_HOST = "node1"
+MILVUS_HOST = "node0"
 MILVUS_PORT = "19530"
 DATASET_DIR = "/mydata/spacev1b"
 QUERY_VECTORS = f"{DATASET_DIR}/spacev1b_query.bin"
