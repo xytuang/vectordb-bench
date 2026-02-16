@@ -1,0 +1,14 @@
+[global]
+ioengine=libaio
+direct=1
+runtime=300
+time_based=1
+group_reporting=1
+size=100%
+filename=/dev/nvme0n1
+
+[randread-4k]
+rw=randread
+bs=4k
+iodepth=32
+
