@@ -166,7 +166,7 @@ def load_spacev1b_to_milvus(base_dir, milvus_host, milvus_port):
         batch_count += 1
         
         # Flush periodically
-        if batch_count % 5 == 0:
+        if batch_count % 15 == 0:
             collection.flush()
             print(f"Inserted {current_id:,} vectors so far...")
     
