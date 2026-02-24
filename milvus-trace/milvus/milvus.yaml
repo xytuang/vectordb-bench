@@ -4,3 +4,6 @@ trace:
   otlp:
     endpoint: jaeger:4317
     secure: false
+common:
+  DiskIndex:
+    SearchCacheBudgetGBRatio: 0.25
