@@ -115,8 +115,8 @@ class SearchWorker(threading.Thread):
                 results = collection.search(
                     data=query_vector,
                     anns_field="embedding",
-                    param={"metric_type": "L2", "params": {"search_list": 100}},
-                    limit=TOP_K,
+                    param={"metric_type": "L2", "params": {"search_list": 16}},
+                    limit=8,
                     output_fields=[]
                 )
                 latency = time.time() - start
