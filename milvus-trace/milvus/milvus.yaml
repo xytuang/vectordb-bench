@@ -1,0 +1,6 @@
+trace:
+  exporter: otlp
+  sampleFraction: 1.0
+  otlp:
+    endpoint: jaeger:4317
+    secure: false
