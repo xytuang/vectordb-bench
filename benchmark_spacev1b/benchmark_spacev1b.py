@@ -684,15 +684,6 @@ def run_benchmark(
         },
         "results": {
             "search_only": search_only_stats,
-            "concurrent": {
-                "duration_seconds": total_time,
-                "search": {
-                    "total_queries": total_searches,
-                    "errors": total_search_errors,
-                    "actual_qps": total_searches / total_time,
-                    "latency": search_stats
-                },
-            }
         }
     }
 
@@ -725,7 +716,7 @@ if __name__ == "__main__":
                         help="Number of insert worker threads")
     parser.add_argument("--insert-batch-size", type=int, default=1000,
                         help="Insert batch size")
-    parser.add_argument("--search-only-duration", type=int, default=0,
+    parser.add_argument("--search-only-duration", type=int, default=300,
                         help="Duration of search-only phase in seconds (default 0 = skip)")
     parser.add_argument("--duration", type=int, default=300,
                         help="Duration of concurrent phase (seconds)")
