@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-02-24T13:00:04.533665",
+  "config": {
+    "host": "node0",
+    "port": "19530",
+    "collection": "spacev1b",
+    "search_qps_target": 1000,
+    "insert_qps_target": 10000,
+    "num_search_workers": 8,
+    "num_insert_workers": 5,
+    "insert_batch_size": 1000,
+    "search_only_duration": 300,
+    "concurrent_duration": 0
+  },
+  "results": {
+    "search_only": {
+      "duration_seconds": 300.3485782146454,
+      "total_queries": 4100,
+      "errors": 0,
+      "actual_qps": 13.650805422058358,
+      "latency": {
+        "count": 4099,
+        "mean_ms": 585.7600434055036,
+        "p50_ms": 614.264965057373,
+        "p80_ms": 709.0393543243408,
+        "p90_ms": 748.6163139343263,
+        "p95_ms": 782.1128606796265,
+        "p99_ms": 1039.111762046814,
+        "p99_9_ms": 3593.956059932809,
+        "min_ms": 130.38873672485352,
+        "max_ms": 5249.055862426758
+      }
+    }
+  }
+}
