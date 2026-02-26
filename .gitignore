@@ -8,3 +8,5 @@ milvus-trace/benchmark/__pycache__
 milvus-trace/benchmark/vectordb_bench
 milvus-trace/milvus/volumes
 benchmark_spacev1b/milvus
+benchmark_spacev1b/vectordb_bench
+benchmark_spacev1b/volumes
