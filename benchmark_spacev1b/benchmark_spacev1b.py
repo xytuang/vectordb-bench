@@ -708,7 +708,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Milvus SPACEV1B Benchmark")
-    parser.add_argument("--dataset-path", default="/mydata/SPTAG/datasets/SPACEV1B/vectors.bin/vector_merged.bin",
+    parser.add_argument("--dataset-path", default="/mydata/SPTAG/datasets/SPACEV1B/",
                         help="Path to SPACEV1B dataset")
     parser.add_argument("--host", default="localhost", help="Milvus host")
     parser.add_argument("--port", type=int, default=19530, help="Milvus port")
