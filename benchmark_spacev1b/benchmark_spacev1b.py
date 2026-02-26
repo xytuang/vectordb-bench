@@ -145,7 +145,7 @@ class SearchWorker(threading.Thread):
                     collection_name=self.collection_name,
                     data=query_vector,
                     anns_field="vector",
-                    search_params={"metric_type": "L2", "params": {"nprobe": 10}},
+                    search_params={"metric_type": "L2", "params": {"search_list": 100}},
                     limit=10,
                     output_fields=[]
                 )
@@ -379,19 +379,19 @@ def run_benchmark(
 
         # Create index params
         index_params = client.prepare_index_params()
-        index_params.add_index(
-            field_name="vector",
-            index_type="IVF_FLAT",
-            metric_type="L2",
-            params={"nlist": 4096}
-        )
-
         # index_params.add_index(
-        #         field_name="vector",
-        #         index_type="DISKANN",
-        #         metric_type="L2",
-        #         params={}
+        #     field_name="vector",
+        #     index_type="IVF_FLAT",
+        #     metric_type="L2",
+        #     params={"nlist": 4096}
         # )
+
+        index_params.add_index(
+                field_name="vector",
+                index_type="DISKANN",
+                metric_type="L2",
+                params={}
+        )
 
         client.create_collection(
             collection_name=collection_name,
