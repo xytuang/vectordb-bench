@@ -1,0 +1,9 @@
+queryNode:
+   enableDisk: true
+common:
+  DiskIndex:
+    MaxDegree: 56  # Maximum degree of the Vamana graph
+    SearchListSize: 100  # Size of the candidate list during building graph
+    PQCodeBudgetGBRatio: 0.125  # Size limit on the PQ code (compared with raw data)
+    SearchCacheBudgetGBRatio: 0.2 # Ratio of cached node numbers to raw data
+    BeamWidthRatio: 8 # Ratio between the maximum number of IO requests per search 

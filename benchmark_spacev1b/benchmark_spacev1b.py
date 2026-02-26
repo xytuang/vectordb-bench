@@ -386,6 +386,13 @@ def run_benchmark(
             params={"nlist": 4096}
         )
 
+        # index_params.add_index(
+        #         field_name="vector",
+        #         index_type="DISKANN",
+        #         metric_type="L2",
+        #         params={}
+        # )
+
         client.create_collection(
             collection_name=collection_name,
             schema=schema,

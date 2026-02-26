@@ -7,3 +7,4 @@ benchmark/compact.py
 milvus-trace/benchmark/__pycache__
 milvus-trace/benchmark/vectordb_bench
 milvus-trace/milvus/volumes
+benchmark_spacev1b/milvus
