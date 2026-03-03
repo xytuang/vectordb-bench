@@ -146,7 +146,6 @@ class SearchWorker(threading.Thread):
                     data=query_vector,
                     anns_field="vector",
                     search_params={"metric_type": "L2", "params": {"search_list": 100}},
-                    limit=10,
                     output_fields=[]
                 )
                 latency = time.time() - start
@@ -710,7 +709,7 @@ if __name__ == "__main__":
                         help="Target search QPS")
     parser.add_argument("--insert-qps", type=int, default=10000,
                         help="Target insert rate (vectors/sec)")
-    parser.add_argument("--search-workers", type=int, default=10,
+    parser.add_argument("--search-workers", type=int, default=256,
                         help="Number of search worker threads")
     parser.add_argument("--insert-workers", type=int, default=5,
                         help="Number of insert worker threads")
