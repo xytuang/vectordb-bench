@@ -317,7 +317,7 @@ def run_benchmark(
     num_insert_workers=5,
     insert_batch_size=1000,
     duration=0,
-    search_only_duration=300
+    search_only_duration=18000
 ):
     """
     Run the SPACEV1B benchmark
