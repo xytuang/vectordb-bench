@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-03-04T02:16:01.395115",
+  "config": {
+    "dataset_path": "/mydata/SPTAG/datasets/SPACEV1B/",
+    "host": "localhost",
+    "port": 19530,
+    "collection": "spacev1b_benchmark",
+    "initial_vectors": 50000000,
+    "search_qps_target": 1000,
+    "insert_qps_target": 10000,
+    "num_search_workers": 256,
+    "num_insert_workers": 5,
+    "insert_batch_size": 1000,
+    "search_only_duration": 300,
+    "concurrent_duration": 300
+  },
+  "results": {
+    "search_only": {
+      "duration_seconds": 305.27700114250183,
+      "total_queries": 201663,
+      "errors": 0,
+      "actual_qps": 660.5902155919852,
+      "latency": {
+        "count": 201663,
+        "mean_ms": 122.74827000844924,
+        "p50_ms": 110.67056655883789,
+        "p80_ms": 180.70011138916016,
+        "p90_ms": 226.21049880981448,
+        "p95_ms": 265.6585693359374,
+        "p99_ms": 345.63344478607206,
+        "p99_9_ms": 466.9112906456005,
+        "min_ms": 3.544330596923828,
+        "max_ms": 693.4065818786621
+      }
+    }
+  }
+}
