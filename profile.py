@@ -48,6 +48,8 @@ lan = request.LAN("lan")
 lan.addInterface(node0.addInterface())
 lan.addInterface(node1.addInterface())
 lan.addInterface(node2.addInterface())
+lan.addInterface(node3.addInterface())
+lan.addInterface(node4.addInterface())
 
 # Print the RSpec to the enclosing page.
 pc.printRequestRSpec(request)
