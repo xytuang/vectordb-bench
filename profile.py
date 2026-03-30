@@ -30,7 +30,7 @@ bs1 = node1.Blockstore("bs1", "/mydata")
 
 # Client node
 node2 = request.RawPC("node2")
-node2.hardware_type = "m510" # or "xl170" or "c6525-25g"
+node2.hardware_type = "xl170" # or "xl170" or "c6525-25g"
 node2.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
 bs2 = node2.Blockstore("bs2", "/mydata")
 
