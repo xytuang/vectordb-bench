@@ -37,10 +37,10 @@ node3.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD
 bs3 = node3.Blockstore("bs3", "/mydata")
 
 # Milvus node - memory focused  
-node4 = request.RawPC("node4")
-node4.hardware_type = "c6620"  # Use the Optane SSD on the d750 or "c6525-100g"
-node4.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
-bs4 = node4.Blockstore("bs4", "/mydata")
+# node4 = request.RawPC("node4")
+# node4.hardware_type = "c6620"  # Use the Optane SSD on the d750 or "c6525-100g"
+# node4.disk_image = "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"
+# bs4 = node4.Blockstore("bs4", "/mydata")
 
 
 # Create a LAN to connect all nodes
@@ -49,7 +49,7 @@ lan.addInterface(node0.addInterface())
 lan.addInterface(node1.addInterface())
 lan.addInterface(node2.addInterface())
 lan.addInterface(node3.addInterface())
-lan.addInterface(node4.addInterface())
+# lan.addInterface(node4.addInterface())
 
 # Print the RSpec to the enclosing page.
 pc.printRequestRSpec(request)
