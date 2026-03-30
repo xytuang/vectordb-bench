@@ -47,7 +47,7 @@ bs1 = node1.Blockstore("bs1", "/mydata")
 lan = request.LAN("lan")
 lan.addInterface(node0.addInterface())
 lan.addInterface(node1.addInterface())
-lan.addInterface(node2.addInterface())
+# lan.addInterface(node2.addInterface())
 # lan.addInterface(node3.addInterface())
 # lan.addInterface(node4.addInterface())
 
